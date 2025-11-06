@@ -1,7 +1,3 @@
-# Created on iPad.
-#print("Hello World!")
-#a= 10+10
-#print(type(a))
 
 import random
 
