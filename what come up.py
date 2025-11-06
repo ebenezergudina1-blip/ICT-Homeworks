@@ -1,11 +1,4 @@
-# Created on iPad.
-#def sub(num1,num2):
-#    print(num1-num2)
-#sub(26,20)
 
-#def add(num1,num2):
-#    print(num1+num2)
-#add(3,
 import random
 
 civilian = ["ebenezer", "selamawit", "fikadu"]
