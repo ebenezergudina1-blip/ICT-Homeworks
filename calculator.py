@@ -1,4 +1,3 @@
-# Created on iPad.
 
 user = input("please insert the type of unit to convert to meters, choices include: mm, cm, hm and km:").lower().strip()
 number= float(input("Insert a number"))
