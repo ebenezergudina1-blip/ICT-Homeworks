@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Verification Code - Haile Manas Academy{% endblock %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 40px auto;">
+    <div class="card" style="text-align: center;">
+        <h2 style="color: var(--primary-color); margin-bottom: 10px;">Haile Manas Academy</h2>
+        <h3 style="margin-bottom: 30px;">Verification Code Generated</h3>
+        
+        <div style="padding: 20px; background: #fff3cd; border-radius: var(--border-radius); margin-bottom: 25px; text-align: left;">
+            <h4 style="color: #856404; margin-bottom: 15px;">⚠️ Important Instructions:</h4>
+            <ul style="padding-left: 20px;">
+                <li style="margin-bottom: 8px;">Share this code ONLY with your parent/guardian</li>
+                <li style="margin-bottom: 8px;">Do not share with anyone else</li>
+                <li style="margin-bottom: 8px;">This code will expire after it's used once</li>
+                <li>Your parent needs this code to submit exit request</li>
+            </ul>
+        </div>
+        
+        <div style="padding: 40px; background: #f8f9fa; border-radius: var(--border-radius); border: 2px dashed #ddd; margin-bottom: 30px;">
+            <h4 style="margin-bottom: 15px; color: #666;">Your Verification Code:</h4>
+            <div style="font-size: 48px; letter-spacing: 10px; color: var(--danger-color); font-weight: bold; 
+                     margin: 20px 0; font-family: 'Courier New', monospace; word-break: break-all;">
+                {{ verification_code }}
+            </div>
+            <p style="margin-bottom: 10px;"><strong>For Student:</strong> {{ student_name }}</p>
+            <p style="color: #666; font-size: 14px;"><em>Code expires after use</em></p>
+        </div>
+        
+        <div style="margin-bottom: 30px;">
+            <p style="font-weight: 500; margin-bottom: 15px;">📝 What to do next:</p>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; text-align: center;">
+                <div>
+                    <div style="background: var(--primary-color); color: white; width: 40px; height: 40px; line-height: 40px; border-radius: 50%; margin: 0 auto 10px; font-weight: bold;">1</div>
+                    <p>Share code with parent</p>
+                </div>
+                <div>
+                    <div style="background: var(--secondary-color); color: white; width: 40px; height: 40px; line-height: 40px; border-radius: 50%; margin: 0 auto 10px; font-weight: bold;">2</div>
+                    <p>Parent submits request</p>
+                </div>
+                <div>
+                    <div style="background: var(--warning-color); color: white; width: 40px; height: 40px; line-height: 40px; border-radius: 50%; margin: 0 auto 10px; font-weight: bold;">3</div>
+                    <p>Check dashboard for status</p>
+                </div>
+            </div>
+        </div>
+        
+        <div style="display: flex; gap: 15px; justify-content: center; margin-bottom: 30px;">
+            <a href="/dashboard" class="btn btn-primary">Back to Dashboard</a>
+            <a href="/" class="btn" style="background: #f8f9fa; color: var(--dark-color);">Go to Home</a>
+        </div>
+        
+        <div style="padding-top: 20px; border-top: 1px solid #eee;">
+            <p style="color: #666; font-size: 14px;">
+                <strong>🔒 Security Note:</strong> This system uses unique verification codes to prevent impersonation.<br>
+                Only share this code with authorized parents/guardians.
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

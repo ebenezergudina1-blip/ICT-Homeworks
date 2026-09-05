@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}500 Server Error - Haile Manas Academy{% endblock %}
+
+{% block content %}
+<div style="text-align: center; padding: 80px 20px;">
+    <div style="font-size: 120px; color: #e74c3c; margin-bottom: 20px;">500</div>
+    <h1 style="margin-bottom: 20px; color: var(--dark-color);">Server Error</h1>
+    <p style="font-size: 18px; color: #666; margin-bottom: 30px; max-width: 500px; margin-left: auto; margin-right: auto;">
+        Something went wrong on our server. Please try again later.
+    </p>
+    <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+        <a href="/" class="btn btn-primary">Go to Homepage</a>
+        <button onclick="window.location.reload()" class="btn" style="background: #f8f9fa; color: var(--dark-color);">Try Again</button>
+    </div>
+</div>
+{% endblock %}

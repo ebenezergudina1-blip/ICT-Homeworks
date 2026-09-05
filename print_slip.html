@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+
+{% block title %}Exit Slip - Haile Manas Academy{% endblock %}
+
+{% block extra_css %}
+<style>
+    @media print {
+        body * {
+            visibility: hidden;
+        }
+        .printable-slip, .printable-slip * {
+            visibility: visible;
+        }
+        .printable-slip {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            padding: 20px;
+            background: white;
+        }
+        .no-print {
+            display: none !important;
+        }
+        .print-only {
+            display: block !important;
+        }
+    }
+    .print-only {
+        display: none;
+    }
+    
+    /* Slip-specific styles */
+    .slip-header {
+        text-align: center;
+        margin-bottom: 30px;
+        border-bottom: 3px solid var(--primary-color);
+        padding-bottom: 20px;
+    }
+    
+    .slip-section {
+        margin-bottom: 25px;
+    }
+    
+    .signature-area {
+        border-top: 2px dashed #666;
+        padding-top: 30px;
+        margin-top: 40px;
+    }
+    
+    .warning-box {
+        background: #ffeaa7;
+        border: 2px solid #fdcb6e;
+        border-radius: var(--border-radius);
+        padding: 15px;
+        margin: 20px 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 40px auto;">
+    <div class="card printable-slip">
+        <div class="slip-header">
+            <h1 style="color: var(--primary-color); margin-bottom: 10px;">Haile Manas Academy</h1>
+            <h2 style="color: var(--dark-color); margin-bottom: 5px;">EXIT PERMISSION SLIP</h2>
+            <p style="color: #666;">Official Authorization Document</p>
+            <p style="color: #999; font-size: 14px; margin-top: 10px;">Slip ID: HMA-{{ request.id }}-{{ request.student_email[:4]|upper }}</p>
+            <p style="color: #28a745; font-size: 14px; margin-top: 5px; font-weight: bold;">
+                ✅ PRINTED BY ADMINISTRATION
+            </p>
+        </div>
+        
+        <div style="margin-bottom: 30px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px;">
+                <div class="card" style="background: #f8f9fa;">
+                    <h4 style="margin-bottom: 15px; color: var(--primary-color);">Student Information</h4>
+                    <p><strong>Name:</strong> {{ student.name if student else request.student_email }}</p>
+                    <p><strong>Class Year:</strong> {{ student.year if student else 'N/A' }}</p>
+                    <p><strong>Student ID:</strong> {{ request.id }}</p>
+                </div>
+                
+                <div class="card" style="background: #f8f9fa;">
+                    <h4 style="margin-bottom: 15px; color: var(--primary-color);">Parent Information</h4>
+                    <p><strong>Parent Name:</strong> {{ request.parent_email }}</p>
+                    <p><strong>Request Date:</strong> {{ request.created_at[:10] if request.created_at else 'N/A' }}</p>
+                    <p><strong>Status:</strong> <span class="status {{ request.status }}">{{ request.status|title }}</span></p>
+                </div>
+            </div>
+            
+            <div class="card slip-section" style="border-left: 5px solid var(--success-color);">
+                <h4 style="margin-bottom: 15px; color: var(--success-color);">Exit Authorization</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div>
+                        <p><strong>Exit Date:</strong> {{ request.exit_date }}</p>
+                        <p><strong>Exit Time:</strong> {{ request.exit_time }}</p>
+                    </div>
+                    <div>
+                        <p><strong>Return Date:</strong> {{ request.return_date }}</p>
+                        <p><strong>Return Time:</strong> {{ request.return_time }}</p>
+                    </div>
+                </div>
+                <p style="margin-top: 15px;"><strong>Purpose:</strong> {{ request.reason }}</p>
+                <p style="margin-top: 10px;"><strong>Verification Code:</strong> <code>{{ request.verification_code }}</code></p>
+            </div>
+            
+            <!-- ========== PICK-UP PERSON INFORMATION ========== -->
+            {% if request.pickup_by_other == 1 %}
+            <div class="warning-box slip-section">
+                <h4 style="margin-bottom: 15px; color: #d35400;">⚠️ DESIGNATED PICK-UP PERSON</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                    <div>
+                        <p><strong>Full Name:</strong> {{ request.other_person_name }}</p>
+                        <p><strong>Phone Number:</strong> {{ request.other_person_phone }}</p>
+                    </div>
+                    <div>
+                        <p><strong>Relationship:</strong> {{ request.other_person_relationship }}</p>
+                        {% if request.other_person_id %}
+                        <p><strong>ID Number:</strong> {{ request.other_person_id }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div style="background: #fab1a0; padding: 10px; border-radius: 5px; text-align: center; margin-top: 15px;">
+                    <p style="color: #d63031; font-weight: bold; margin: 0;">
+                        ⚠️ SCHOOL STAFF MUST VERIFY ID BEFORE RELEASING STUDENT
+                    </p>
+                </div>
+            </div>
+            {% else %}
+            <div class="card slip-section" style="border-left: 5px solid #3498db; background: #f8f9fa;">
+                <h4 style="margin-bottom: 15px; color: #2c3e50;">👨‍👩‍👧‍👦 PICK-UP INFORMATION</h4>
+                <p><strong>Person Picking Up:</strong> PARENT / GUARDIAN</p>
+                <p style="color: #666; font-style: italic; margin-top: 10px;">
+                    The parent/guardian listed above will pick up the student.
+                </p>
+            </div>
+            {% endif %}
+            <!-- ========== END PICK-UP SECTION ========== -->
+            
+            {% if request.admin_notes %}
+            <div class="card slip-section" style="background: #fff3cd;">
+                <h4 style="margin-bottom: 10px; color: #856404;">Administration Notes</h4>
+                <p>{{ request.admin_notes }}</p>
+                {% if request.admin_decision_date %}
+                <p style="margin-top: 10px;"><strong>Decision Date:</strong> {{ request.admin_decision_date[:16] }}</p>
+                {% endif %}
+            </div>
+            {% endif %}
+            
+            <div class="card signature-area">
+                <h3 style="color: var(--success-color); margin-bottom: 20px; text-align: center;">✅ AUTHORIZED FOR EXIT</h3>
+                <div style="display: flex; justify-content: space-around; margin-top: 30px;">
+                    <div style="text-align: center;">
+                        <div style="border-bottom: 1px solid #666; width: 200px; margin-bottom: 10px; height: 30px;"></div>
+                        <p>Parent/Guardian Signature</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="border-bottom: 1px solid #666; width: 200px; margin-bottom: 10px; height: 30px;"></div>
+                        <p>School Administrator</p>
+                    </div>
+                </div>
+                <div style="text-align: center; margin-top: 20px;">
+                    <div style="border-bottom: 1px solid #666; width: 300px; margin: 0 auto 10px; height: 30px;"></div>
+                    <p>Gate Security (Stamp/Signature)</p>
+                </div>
+                <p style="margin-top: 30px; color: #666; font-size: 14px; text-align: center;">
+                    <strong>Note:</strong> Student must present this slip at the gate. Return to dormitory by specified time.
+                </p>
+            </div>
+        </div>
+        
+        <div class="print-only" style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee;">
+            <p style="color: #999; font-size: 12px;">Haile Manas Academy Exit Permission System</p>
+            <p style="color: #999; font-size: 12px;">Generated on: <span class="current-date"></span></p>
+            <p style="color: #999; font-size: 12px;">Printed by: {{ user_name }} ({{ user_role }})</p>
+            <p style="color: #999; font-size: 12px;">This is an official document. Do not duplicate.</p>
+        </div>
+        
+        <div class="no-print" style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
+            <button onclick="window.print()" class="btn btn-primary" style="padding: 12px 30px; font-size: 16px;">
+                🖨️ Print This Slip
+            </button>
+            <a href="/dashboard" class="btn" style="background: #f8f9fa; color: var(--dark-color); margin-left: 15px;">Back to Dashboard</a>
+            <p style="margin-top: 15px; color: #666; font-size: 14px;">
+                Click "Print" to generate a physical copy or save as PDF.
+            </p>
+            <p style="margin-top: 10px; color: #28a745; font-size: 14px;">
+                ✅ This slip has been marked as printed in the system.
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Add current date for printing
+    document.addEventListener('DOMContentLoaded', function() {
+        const now = new Date();
+        const currentDate = now.toLocaleDateString('en-US', { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        
+        // Update current date element
+        const dateElements = document.querySelectorAll('.current-date');
+        dateElements.forEach(el => {
+            el.textContent = currentDate;
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+
+{% block title %}Parent Dashboard - Haile Manas Academy{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="header">
+        <div>
+            <h1 style="color: var(--secondary-color); margin-bottom: 5px;">Haile Manas Academy</h1>
+            <h3 style="color: #666;">Parent Dashboard</h3>
+        </div>
+        <div style="text-align: right;">
+            <p style="margin-bottom: 10px; font-weight: 500;">Welcome, {{ user_name }}</p>
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <a href="/request_exit" class="btn btn-success">New Exit Request</a>
+                <a href="/logout" class="btn btn-danger">Logout</a>
+            </div>
+        </div>
+    </div>
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    
+    <div class="card" style="background: #f8f9fa; margin-bottom: 30px;">
+        <h3 style="margin-bottom: 20px;">👨‍👩‍👧‍👦 Your Children</h3>
+        {% if children %}
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px;">
+            {% for child in children %}
+            <div class="card" style="text-align: center;">
+                <h4 style="color: var(--dark-color); margin-bottom: 15px;">{{ child.name }}</h4>
+                <p style="margin-bottom: 8px;"><strong>Class:</strong> {{ child.year }}</p>
+                <p style="margin-bottom: 8px;"><strong>Email:</strong> {{ child.email }}</p>
+                <p style="color: #666; font-size: 14px;">Parent: {{ child.parent_name }}</p>
+                <a href="/request_exit" class="btn btn-primary" style="margin-top: 10px; width: 100%;">
+                    Request Exit for {{ child.name }}
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div style="text-align: center; padding: 30px;">
+            <p style="color: #666; font-size: 16px;">No children found in your account.</p>
+            <p style="color: #999; margin-top: 10px;">Contact administrator if this is incorrect.</p>
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="card">
+        <h3 style="margin-bottom: 20px;">📋 Exit Requests</h3>
+        {% if requests %}
+        <div style="overflow-x: auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Pick-up By</th>
+                        <th>Reason</th>
+                        <th>Exit Date/Time</th>
+                        <th>Return Date/Time</th>
+                        <th>Status</th>
+                        <th>Print Status</th>
+                        <th>Created</th>
+                        <th>Admin Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for req in requests %}
+                    <tr>
+                        <td><strong>{{ req.student_email.split('@')[0] }}</strong></td>
+                        <td>
+                            {% if req.pickup_by_other == 1 %}
+                            <div style="color: #e74c3c;">
+                                <strong>👤 {{ req.other_person_name }}</strong><br>
+                                <small>{{ req.other_person_relationship }}</small><br>
+                                <small>📞 {{ req.other_person_phone }}</small>
+                            </div>
+                            {% else %}
+                            <div style="color: #3498db;">
+                                <strong>👨‍👩‍👧‍👦 Parent</strong><br>
+                                <small>You (parent)</small>
+                            </div>
+                            {% endif %}
+                        </td>
+                        <td>{{ req.reason[:30] if req.reason else 'N/A' }}{% if req.reason and req.reason|length > 30 %}...{% endif %}</td>
+                        <td>
+                            {{ req.exit_date }}<br>
+                            <small>{{ req.exit_time }}</small>
+                        </td>
+                        <td>
+                            {{ req.return_date }}<br>
+                            <small>{{ req.return_time }}</small>
+                        </td>
+                        <td><span class="status {{ req.status }}">{{ req.status|title }}</span></td>
+                        <td>
+                            {% if req.status == 'approved' %}
+                                {% if req.printed == 1 %}
+                                    <span class="badge" style="background: #28a745; color: white; padding: 5px 10px; border-radius: 4px; font-size: 12px;">
+                                        ✅ Printed by Admin
+                                    </span>
+                                {% else %}
+                                    <span class="badge" style="background: #17a2b8; color: white; padding: 5px 10px; border-radius: 4px; font-size: 12px;">
+                                        ⏳ Awaiting Print
+                                    </span>
+                                {% endif %}
+                            {% else %}
+                                <span style="color: #999;">-</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ req.created_at[:10] if req.created_at else 'N/A' }}</td>
+                        <td>
+                            {% if req.admin_notes %}
+                            <div class="tooltip">
+                                <small style="color: #666; font-size: 12px;">📝 {{ req.admin_notes[:40] }}{% if req.admin_notes|length > 40 %}...{% endif %}</small>
+                                <span class="tooltiptext">{{ req.admin_notes }}</span>
+                            </div>
+                            {% else %}
+                            <small style="color: #999;">No notes</small>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div style="text-align: center; padding: 30px;">
+            <p style="color: #666; font-size: 16px;">No exit requests yet.</p>
+            <p style="color: #999; margin-top: 10px;">Use "New Exit Request" button to create one.</p>
+        </div>
+        {% endif %}
+    </div>
+    
+    <style>
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: help;
+        }
+        
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 300px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -150px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        .badge {
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 500;
+        }
+    </style>
+</div>
+{% endblock %}

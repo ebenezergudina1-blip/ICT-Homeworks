@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Reject Request - Haile Manas Academy{% endblock %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 40px auto;">
+    <div class="card">
+        <div style="text-align: center; margin-bottom: 25px;">
+            <h2 style="color: var(--danger-color); margin-bottom: 10px;">Reject Exit Request</h2>
+            <h4>Request ID: {{ request_data.id }}</h4>
+        </div>
+        
+        <div class="card" style="background: #f8f9fa; margin-bottom: 20px;">
+            <h4 style="margin-bottom: 10px;">Request Details:</h4>
+            <p><strong>Student:</strong> {{ request_data.student_email }}</p>
+            <p><strong>Parent:</strong> {{ request_data.parent_email }}</p>
+            <p><strong>Reason:</strong> {{ request_data.reason }}</p>
+            <p><strong>Exit:</strong> {{ request_data.exit_date }} at {{ request_data.exit_time }}</p>
+            <p><strong>Return:</strong> {{ request_data.return_date }} at {{ request_data.return_time }}</p>
+        </div>
+        
+        <form method="POST" action="/admin/reject_with_reason/{{ request_data.id }}">
+            <label for="admin_notes" style="display: block; margin-bottom: 8px; font-weight: 500;">
+                Reason for Rejection (Required):
+            </label>
+            <textarea id="admin_notes" name="admin_notes" rows="4" 
+                     placeholder="Please provide a clear reason for rejecting this request. This will be visible to the parent and student..."
+                     required></textarea>
+            
+            <div style="display: flex; gap: 10px; margin-top: 30px;">
+                <button type="submit" class="btn btn-danger" style="flex: 1;">Reject Request</button>
+                <a href="/dashboard" class="btn" style="background: #f8f9fa; color: var(--dark-color); flex: 1;">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

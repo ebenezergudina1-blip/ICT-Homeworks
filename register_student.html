@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Student Registration - Haile Manas Academy{% endblock %}
+
+{% block content %}
+<div style="max-width: 500px; margin: 40px auto;">
+    <div class="card">
+        <div style="text-align: center; margin-bottom: 25px;">
+            <h2 style="color: var(--primary-color); margin-bottom: 10px;">Haile Manas Academy</h2>
+            <h3>Student Registration</h3>
+        </div>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <div style="padding: 15px; background: #fff3cd; border-radius: var(--border-radius); margin-bottom: 20px;">
+            <p style="font-weight: 500; margin-bottom: 8px;">📋 Registration Information:</p>
+            <p style="font-size: 14px; color: #856404;">Only 5 predefined students can register.</p>
+            <p style="font-size: 13px; color: #856404; margin-top: 5px;">
+                Available: Ebenezer Gudina, Feven Sanka, Mikias Tesfaye, Amen Alemu, Wubshet Destaw
+            </p>
+        </div>
+        
+        <form method="POST" action="/register/student">
+            <input type="text" name="name" placeholder="Full Name" required>
+            <input type="email" name="email" placeholder="School Email (nameYEAR@hmacademy.org)" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <input type="password" name="confirm_password" placeholder="Confirm Password" required>
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 14px; font-size: 16px;">Register as Student</button>
+        </form>
+        
+        <div style="text-align: center; margin-top: 25px; padding-top: 20px; border-top: 1px solid #eee;">
+            <p><a href="/login" style="color: var(--primary-color);">Already have an account? Login</a></p>
+            <p style="margin-top: 10px;"><a href="/" style="color: var(--primary-color);">← Back to Home</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

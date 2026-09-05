@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+
+{% block title %}Student Dashboard - Haile Manas Academy{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="header">
+        <div>
+            <h1 style="color: var(--primary-color); margin-bottom: 5px;">Haile Manas Academy</h1>
+            <h3 style="color: #666;">Student Dashboard</h3>
+        </div>
+        <div style="text-align: right;">
+            <p style="margin-bottom: 10px; font-weight: 500;">Welcome, {{ user_name }}</p>
+            <a href="/logout" class="btn btn-danger">Logout</a>
+        </div>
+    </div>
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    
+    <div class="card" style="background: var(--primary-color); color: white; margin-bottom: 30px;">
+        <h3 style="margin-bottom: 15px;">🔐 Generate Verification Code</h3>
+        <p style="margin-bottom: 20px; opacity: 0.9;">
+            Share this code with your parent when they need to request your exit permission.
+        </p>
+        <div style="text-align: center;">
+            <a href="/generate_verification/{{ student.email if student else '' }}" 
+               class="btn" 
+               style="background: white; color: var(--primary-color); font-size: 18px; padding: 15px 40px;">
+                Generate New Code
+            </a>
+        </div>
+    </div>
+    
+    {% if codes %}
+    <div class="card" style="margin-bottom: 30px;">
+        <h3 style="margin-bottom: 20px;">🔑 Active Verification Codes</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px;">
+            {% for code in codes %}
+            <div class="card" style="text-align: center; background: #d1ecf1;">
+                <div style="font-family: 'Courier New', monospace; font-size: 20px; font-weight: bold; 
+                         color: #0c5460; margin: 10px 0; letter-spacing: 2px;">
+                    {{ code.code }}
+                </div>
+                <p style="font-size: 12px; color: #666;">Created: {{ code.created_at[:10] }}</p>
+                <p style="font-size: 12px; color: #666;">
+                    {% if code.is_used == 0 %}
+                    <span style="color: green;">● Available</span>
+                    {% else %}
+                    <span style="color: red;">● Used</span>
+                    {% endif %}
+                </p>
+            </div>
+            {% endfor %}
+        </div>
+        <p style="margin-top: 15px; color: #666; font-size: 14px;">
+            <strong>Note:</strong> Share these codes with your parent. Each code can only be used once.
+        </p>
+    </div>
+    {% endif %}
+    
+    <div class="card" style="margin-bottom: 30px;">
+        <h3 style="margin-bottom: 20px;">📋 Your Exit Requests</h3>
+        {% if requests %}
+        <div style="overflow-x: auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Reason</th>
+                        <th>Exit Date</th>
+                        <th>Return Date</th>
+                        <th>Status</th>
+                        <th>Print Status</th>
+                        <th>Admin Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for req in requests %}
+                    <tr>
+                        <td>{{ req.created_at[:10] if req.created_at else 'N/A' }}</td>
+                        <td>{{ req.reason if req.reason else 'N/A' }}</td>
+                        <td>{{ req.exit_date if req.exit_date else 'N/A' }}</td>
+                        <td>{{ req.return_date if req.return_date else 'N/A' }}</td>
+                        <td><span class="status {{ req.status }}">{{ req.status }}</span></td>
+                        <td>
+                            {% if req.status == 'approved' %}
+                                {% if req.printed == 1 %}
+                                    <span style="color: #28a745; font-weight: bold;">✅ Printed</span>
+                                {% else %}
+                                    <span style="color: #f39c12;">⏳ Not Printed</span>
+                                {% endif %}
+                            {% else %}
+                                <span style="color: #999;">-</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if req.admin_notes %}
+                            <div class="tooltip">
+                                <small style="color: #666; font-size: 12px;">📝 {{ req.admin_notes[:40] }}{% if req.admin_notes|length > 40 %}...{% endif %}</small>
+                                <span class="tooltiptext">{{ req.admin_notes }}</span>
+                            </div>
+                            {% else %}
+                            <small style="color: #999;">No notes</small>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div style="text-align: center; padding: 30px;">
+            <p style="color: #666; font-size: 16px;">No exit requests yet.</p>
+            <p style="color: #999; margin-top: 10px;">Generate a code and share it with your parent to get started.</p>
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="card" style="background: #f8f9fa;">
+        <h4 style="margin-bottom: 15px;">👤 Student Information</h4>
+        {% if student %}
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+            <div>
+                <p style="font-weight: 500; color: #666;">Name</p>
+                <p>{{ student.name }}</p>
+            </div>
+            <div>
+                <p style="font-weight: 500; color: #666;">Email</p>
+                <p>{{ student.email }}</p>
+            </div>
+            <div>
+                <p style="font-weight: 500; color: #666;">Year</p>
+                <p>{{ student.year }}</p>
+            </div>
+            <div>
+                <p style="font-weight: 500; color: #666;">Parent</p>
+                <p>{{ student.parent_name }}</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    .tooltip {
+        position: relative;
+        display: inline-block;
+        cursor: help;
+    }
+    
+    .tooltip .tooltiptext {
+        visibility: hidden;
+        width: 300px;
+        background-color: #555;
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 10px;
+        position: absolute;
+        z-index: 1;
+        bottom: 125%;
+        left: 50%;
+        margin-left: -150px;
+        opacity: 0;
+        transition: opacity 0.3s;
+        font-size: 12px;
+    }
+    
+    .tooltip:hover .tooltiptext {
+        visibility: visible;
+        opacity: 1;
+    }
+</style>
+{% endblock %}

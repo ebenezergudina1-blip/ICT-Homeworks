@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}404 Not Found - Haile Manas Academy{% endblock %}
+
+{% block content %}
+<div style="text-align: center; padding: 80px 20px;">
+    <div style="font-size: 120px; color: #e74c3c; margin-bottom: 20px;">404</div>
+    <h1 style="margin-bottom: 20px; color: var(--dark-color);">Page Not Found</h1>
+    <p style="font-size: 18px; color: #666; margin-bottom: 40px; max-width: 500px; margin-left: auto; margin-right: auto;">
+        The page you're looking for doesn't exist or has been moved.
+    </p>
+    <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+        <a href="/dashboard" class="btn btn-primary">Return to Dashboard</a>
+        <a href="/" class="btn" style="background: #f8f9fa; color: var(--dark-color);">Go to Homepage</a>
+    </div>
+</div>
+{% endblock %}
